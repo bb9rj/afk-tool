@@ -47,7 +47,7 @@ Hotkeys
 - F7 → Start main loop
 - F6 → Stop/pause loop
 - F8 → Exit script
-- F10 → Bring main GUI back into view
+- F10 → Moves GUI to the corner
 
 Error Logging
 - Logs errors to `error_log.txt` with a timestamp and context for troubleshooting.
