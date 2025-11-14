@@ -48,10 +48,6 @@ Hotkeys
 - F6 → Stop/pause loop
 - F8 → Exit script
 - F10 → Bring main GUI back into view
-- Alt+S → Stack windows
-- Alt+T → Tile windows
-- Alt+C → Waterfall windows
-- Alt+W → Open window selector
 
 Error Logging
 - Logs errors to `error_log.txt` with a timestamp and context for troubleshooting.
