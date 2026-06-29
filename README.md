@@ -8,198 +8,154 @@ The script operates entirely at the desktop/OS level: it moves and activates win
 
 ## Features
 
-Multi-Window Detection
+**Multi-Window Detection**
 - Detects Roblox windows by process name and title.
 - Supports:
   - Web/desktop Roblox (`RobloxPlayerBeta.exe`)
   - Optional UWP (Microsoft Store) Roblox windows.
 
-Configurable Action Sequences
+**Configurable Action Sequences**
 - Runs a user-defined sequence of commands (clicks, waits, key presses, key holds) on each selected window.
-- Actions are defined in a single comma-separated string and can be edited at runtime via a GUI “Edit” panel with presets.
+- Actions are defined in a single comma-separated string and can be edited at runtime via a GUI "Edit" panel with named presets.
+- Mouse clicks use a natural multi-step approach before landing on the target for reliability.
 
-Cycle Timer
+**Cycle Timer**
 - Repeats the action sequence in cycles with a configurable delay between passes.
-- Preset options:
-  - 0 seconds
-  - 2 minutes
-  - 5 minutes
-  - 10 minutes
+- Preset options: 0 seconds, 2 minutes, 5 minutes, 10 minutes.
 
-Window Minimization
-- Optional setting to minimize each window after actions have been executed.
-- Minimization can also apply to “keep-alive” windows.
+**Window Layout Modes**
+- **Stack:** Shrinks and stacks all windows in a small region.
+- **Tile:** Arranges windows into a grid layout.
+- **Waterfall:** Cascades windows diagonally across the screen.
+- Layout operations respect any active window selection.
 
-Window Layout Modes
-- Stack: Shrinks and stacks windows in a small region.
-- Tile: Arranges windows into a grid layout.
-- Waterfall: Cascades windows diagonally across the screen.
+**Window Selection**
+- Settings dialog lets you pick exactly which Roblox windows are included in the action loop.
+- Buttons to activate individual windows for identification, select all, or select none.
 
-Window Selection GUI
-- Dedicated selector window to pick exactly which Roblox windows should be part of the main action loop.
-- Buttons to:
-  - Activate individual windows
-  - Select all
-  - Select none
-  - Save selection
+**Settings Dialog**
+- Web / UWP window type toggles.
+- Minimize after actions toggle.
+- Click delay (ms) — adjustable for slow machines.
+- Debug clicks toggle (also F9) — shows a red indicator at each click position before firing.
 
-Hotkeys
-- F7 → Start main loop
-- F6 → Stop/pause loop
-- F8 → Exit script
-- F10 → Moves GUI to the corner
+**Responsive Pause**
+- F6 stops the loop within ~250ms regardless of how long the current wait or key hold is.
 
-Error Logging
-- Logs errors to `error_log.txt` with a timestamp and context for troubleshooting.
+**Hotkeys**
+
+| Key | Action |
+|-----|--------|
+| F7 | Start loop |
+| F6 | Stop / pause loop |
+| F8 | Exit (with confirmation) |
+| F9 | Toggle debug click indicators |
+| F10 | Move GUI to corner |
+| Alt+S | Stack windows |
+| Alt+T | Tile windows |
+| Alt+C | Waterfall windows |
+| Alt+W | Open Settings |
+
+**Error Logging**
+- Logs errors to `error_log.txt` with timestamp and context.
 
 -----------------------------------------------------------------------
 
-## User Configuration (Editable at Top of Script)
+## User Configuration
 
-These values are defined in the “USER CONFIGURATION” section and can be changed directly in the script.
+These values are defined at the top of the script under `USER CONFIGURATION`.
 
-Window Detection
-- WEB_ENABLED  
-  Include the standard desktop Roblox windows (`RobloxPlayerBeta.exe`):
-    global WEB_ENABLED := true
+**Window Detection**
+```
+global WEB_ENABLED := true       ; Desktop Roblox (RobloxPlayerBeta.exe)
+global UWP_ENABLED := false      ; Microsoft Store Roblox
+```
 
-- UWP_ENABLED  
-  Include UWP / Microsoft Store Roblox windows:
-    global UWP_ENABLED := false
+**Default Actions**
+```
+global DEFAULT_KEYS := "wait 1000,click 410 460,..."
+```
 
-Default Actions
-- DEFAULT_KEYS  
-  Comma-separated list of commands that define the default action sequence:
-    global DEFAULT_KEYS := "wait 1000,click 410 460,r,1,k,2,3,m,r,m,r,m,r,m,r,l,click 410 460,wait 1000"
+**Cycle Duration**
+```
+global SLEEP_DURATION := 120000  ; ms between cycles (120000 = 2 min)
+```
 
-Cycle Duration
-- SLEEP_DURATION  
-  Time between cycles in milliseconds:
-    global SLEEP_DURATION := 120000
+**Window Behavior**
+```
+global MINIMIZE_AFTER_ACTIONS := false
+global DEBUG_CLICKS := true
+```
 
-  Typical values:
-  - 0        = no wait between cycles
-  - 120000   = 2 minutes
-  - 300000   = 5 minutes
-  - 600000   = 10 minutes
+**Layout Settings**
+```
+global GRID_TIGHTNESS := 1.2       ; Tile grid density
+global EDGE_NUDGE := 8             ; Pixel offset from screen edges
+global WATERFALL_OFFSET_X := 30
+global WATERFALL_OFFSET_Y := 30
+global WATERFALL_WIDTH := 480
+global WATERFALL_HEIGHT := 360
+global TILE_WIDTH_OFFSET := 240
+global TILE_HEIGHT_OFFSET := 224
+global STACK_WINDOW_WIDTH := 100
+global STACK_WINDOW_HEIGHT := 80
+```
 
-Window Behavior
-- MINIMIZE_AFTER_ACTIONS  
-  Minimize each window after actions run:
-    global MINIMIZE_AFTER_ACTIONS := true
-
-Layout Settings (Tile / Stack / Waterfall)
-- GRID_TIGHTNESS  
-  Controls how dense the tiling grid is:
-    global GRID_TIGHTNESS := 1.2
-
-- EDGE_NUDGE  
-  Small offset from the screen edges:
-    global EDGE_NUDGE := 8
-
-Waterfall Layout
-- WATERFALL_OFFSET_X / WATERFALL_OFFSET_Y  
-  Spacing between cascaded windows:
-    global WATERFALL_OFFSET_X := 30  
-    global WATERFALL_OFFSET_Y := 30
-
-- WATERFALL_WIDTH / WATERFALL_HEIGHT  
-  Window size for waterfall layout:
-    global WATERFALL_WIDTH := 480  
-    global WATERFALL_HEIGHT := 360
-
-Tile Layout
-- TILE_WIDTH_OFFSET / TILE_HEIGHT_OFFSET  
-  Reduce usable work area by these amounts when tiling:
-    global TILE_WIDTH_OFFSET := 240  
-    global TILE_HEIGHT_OFFSET := 224
-
-Stack Layout
-- STACK_WINDOW_WIDTH / STACK_WINDOW_HEIGHT  
-  Window size when stacking:
-    global STACK_WINDOW_WIDTH := 100  
-    global STACK_WINDOW_HEIGHT := 80
-
-Technical Constants
-- WINDOW_RESTORE_DELAY, WINDOW_MOVE_DELAY, ACTIVATION_RETRY_MAX, ACTIVATION_RETRY_DELAY, KEY_SEND_DELAY, TOOLTIP_DURATION  
-  These control internal timing and retries for window activation and movement. They are pre-tuned and usually should not be changed.
+**Technical Constants**
+```
+global ACTIVATION_RETRY_MAX := 20
+global ACTIVATION_RETRY_DELAY := 200  ; ms per retry
+global KEY_SEND_DELAY := 100
+global CLICK_PRE_DELAY := 200          ; ms between mouse move and click
+global CLICK_POST_DELAY := 200         ; ms after click before next command
+```
 
 -----------------------------------------------------------------------
 
 ## Action Command Syntax
 
-Actions are defined in a single comma-separated string (DEFAULT_KEYS or the GUI “Actions” field).
+Actions are defined as a comma-separated string in the Edit dialog or `DEFAULT_KEYS`.
 
-Supported commands include:
+| Command | Example | Description |
+|---------|---------|-------------|
+| `wait N` | `wait 1000` | Sleep N milliseconds |
+| `click X Y` | `click 410 460` | Move to (X, Y) in client coords and click |
+| `hold KEY MS` | `hold w 6000` | Hold key down for N ms then release |
+| any key | `r`, `space`, `enter` | Send that key |
 
-wait N
-- Example: `wait 1000`
-- Sleeps for N milliseconds before continuing.
-
-click X Y
-- Example: `click 410 460`
-- Moves the mouse to (X, Y) relative to the active window and performs a click.
-- Includes internal validation to avoid obviously invalid coordinates.
-
-hold KEY DURATION
-- Example: `hold e 500`
-- Holds the specified key down for DURATION milliseconds, then releases it.
-
-Single Keys / Specials
-- Any token that is not “wait”, “click”, or “hold” is treated as a key.
-- Some special mappings:
-  - `space`  → Spacebar
-  - `enter`  → Enter
-  - `tab`    → Tab
-  - `shift`  → Shift
-  - `ctrl`   → Ctrl
-  - `alt`    → Alt
-- Any other value is sent as `{key}` (e.g. `r`, `1`, `k`, etc.).
+Coordinates for `click` are **client coordinates** — use the "Client" values from AHK Window Spy, not Screen.
 
 Example sequences:
-- `r,1,k,2,3,m`
-- `wait 1000,click 410 460,wait 1000`
-- `hold e 500,hold e 500,hold e 500`
+```
+r,1,k,2,3,m
+wait 1000,click 410 460,wait 1000
+hold e 500,hold e 500,hold e 500
+wait 2000,click 180 517,wait 15000,click 104 212,wait 2000,click 660 212
+```
 
 -----------------------------------------------------------------------
 
 ## GUI Overview
 
-Main GUI (caption: “F7, F6, F8”) provides:
+**Main GUI** (`F7, F6, F8`)
+- **Edit** — opens the action editor with presets and cycle timer.
+- **Stack / Tile / Waterfall** — window layout operations.
+- **Settings** — opens the settings dialog (window selection, Web/UWP, minimize, click delay, debug).
+- Status line shows current state, active command, window counter, and countdown between cycles.
 
-- Cycle dropdown:
-  - 00 Sec, 02 Min, 05 Min, 10 Min
-- Web / UWP checkboxes:
-  - Choose which Roblox window types to include.
-- Actions section:
-  - “Edit” button opens a preset GUI to pick or edit the command string.
-- “Minimize after actions” checkbox:
-  - Toggles whether windows are minimized after actions run.
-- Buttons:
-  - Stack: Shrink and stack all detected windows.
-  - Tile: Arrange all detected windows in a grid.
-  - Waterfall: Cascade windows diagonally.
-  - Windows: Open the window selector to pick which windows are “active.”
-- Status line:
-  - Shows current state, errors, and countdown between cycles.
+**Edit Dialog**
+- Text box for the action command string.
+- Cycle timer dropdown (00 Sec, 02 Min, 05 Min, 10 Min).
+- Named preset buttons (Zone, Eggs, Hatch, Rcu, Key, Orbs).
+- Save / Close.
 
-Window Selector GUI (“Pick Windows”):
-
-- Lists all detected Roblox windows with:
-  - Checkbox to include/exclude each one.
-  - Button to activate each window for visual identification.
-- Buttons:
-  - Save: Store current selection into the app state.
-  - All: Select all windows.
-  - None: Deselect all windows.
-  - Close: Close the selector.
-
-Presets GUI (“Default Actions”):
-
-- Edit box for the action string.
-- Buttons for named presets (Zone, Eggs, Hatch, Rcu, Key).
-- Save: Apply changes to the main GUI.
-- Close: Close the dialog without saving.
+**Settings Dialog**
+- Window list with checkboxes — select which windows participate in the loop.
+- Save / All / None selection buttons.
+- Web / UWP toggles.
+- Minimize after actions.
+- Debug clicks (F9).
+- Click delay (ms) input.
 
 -----------------------------------------------------------------------
 
@@ -207,18 +163,14 @@ Presets GUI (“Default Actions”):
 
 When started (F7):
 
-1. Detects all Roblox windows according to Web/UWP settings.
-2. Builds and maintains a list of “active” windows:
-   - If no manual selection has been made, all detected windows are included.
-   - If selection is made, new windows are added automatically unless explicitly excluded.
+1. Detects all Roblox windows per Web/UWP settings.
+2. Maintains an active window list — auto-adds new windows unless explicitly excluded.
 3. For each window:
-   - Activates it and waits until it becomes the foreground window (with retries).
-   - Runs the configured action sequence on “main” windows.
-   - Sends a simple keep-alive key (“m”) to other windows.
-   - Optionally minimizes windows after actions or keep-alive, depending on the checkbox.
-4. After finishing all windows in a cycle:
-   - Waits for the configured SLEEP_DURATION using a second-by-second countdown in the status bar.
-5. Repeats until stopped (F6) or the script exits (F8).
+   - Restores if minimized, activates, waits for foreground focus (with retries).
+   - Runs the action sequence on active windows; sends a keep-alive key (`m`) to others.
+   - Optionally minimizes after actions.
+4. Counts down the configured sleep duration in the status bar.
+5. Repeats until F6 or F8.
 
 -----------------------------------------------------------------------
 
@@ -226,23 +178,15 @@ When started (F7):
 
 - AutoHotkey v2.0 or later.
 - Windows OS with Roblox desktop or UWP client.
-- Script must be saved as `.ahk` and run with AutoHotkey v2.
 
------------------------------------------------------------------------
+## Installation
 
-## Installation and Running
+1. Install [AutoHotkey v2](https://www.autohotkey.com/).
+2. Save `afk tool 26.ahk` anywhere on your machine.
+3. Double-click the `.ahk` file to run.
+4. Press F7 to start, F6 to stop, F8 to exit.
 
-1. Install AutoHotkey v2 from the official site.
-2. Save the script as:
-   RobloxMultiWindowManager.ahk
-3. Double-click the `.ahk` file to run it with AutoHotkey v2.
-4. The main GUI will appear:
-   - Configure cycle time, window types, and actions.
-   - Press F7 to start, F6 to stop, F8 to exit.
-
-<img width="755" height="379" alt="image" src="https://github.com/user-attachments/assets/c67d3f06-aa98-4b4c-9e11-a644872bc75d" />
-
-(Optionally, you can compile the script with the AutoHotkey compiler to produce a standalone `.exe` if desired.)
+Optionally compile to a standalone `.exe` with the AutoHotkey compiler.
 
 -----------------------------------------------------------------------
 
@@ -250,7 +194,7 @@ When started (F7):
 
 This script runs purely at the desktop input and window-management level.  
 It activates windows, moves/resizes them, and sends normal mouse/keyboard input.  
-It does not modify, inspect, or hook into Roblox or any other application’s memory or files.  
+It does not modify, inspect, or hook into Roblox or any other application's memory or files.  
 Use responsibly and in accordance with the terms of service of any software you run it with.
 
 -----------------------------------------------------------------------
